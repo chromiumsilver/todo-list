@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A simple and efficient todo list application">
+  <title>Todo List</title>
+  <!-- Add multiple favicon sizes -->
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../assets/favicon-16x16.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+    rel="stylesheet">
+  <!-- Add Material Icons font -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<body>
+  <header>
+    <span class="header-icon material-icons">done_all</span>
+    <h1>Todo List</h1>
+  </header>
+  <main id="content">
+    <div class="sidebar">
+      <section class="filters">
+        <button class="filter-btn">
+          <span class="filter-icon material-icons">today</span>
+          <span>Today</span>
+        </button>
+        <button class="filter-btn">
+          <span class="filter-icon material-icons">calendar_month</span>
+          <span>All</span>
+        </button>
+        <button class="filter-btn">
+          <span class="filter-icon material-icons">flag</span>
+          <span>Flagged</span>
+        </button>
+      </section>
+      <section class="lists">
+        <h2 class="list-header">My Lists</h2>
+        <button class="filter-btn">
+          <span class="filter-icon material-icons">home</span>
+          <span>Family</span>
+        </button>
+      </section>
+      <button class="add-list-btn">+ Add List</button>
+    </div>
+    <section class="main-content">
+      <div class="task-list-header">
+        <h2 class="task-list-title">Family</h2>
+        <button class="add-task-btn">+ Add Task</button>
+      </div>
+      <ul class="tasks">
+        <li class="task-item">
+          <input type="checkbox" id="task-1" class="task-checkbox">
+          <label for="task-1" class="task-text">Buy groceries</label>
+          <div class="task-actions">
+            <button class="task-edit">
+              <span class="material-icons">edit</span>
+            </button>
+            <button class="task-delete">
+              <span class="material-icons">delete</span>
+            </button>
+          </div>
+        </li>
+        <li class="task-item completed">
+          <input type="checkbox" id="task-2" class="task-checkbox" checked>
+          <label for="task-2" class="task-text">Call mom</label>
+          <div class="task-actions">
+            <button class="task-edit">
+              <span class="material-icons">edit</span>
+            </button>
+            <button class="task-delete">
+              <span class="material-icons">delete</span>
+            </button>
+          </div>
+        </li>
+      </ul>
+    </section>
+  </main>
+  <footer>Copyright &copy; 2025 chromiumsilver</footer>
+</body>
+
+</html>
