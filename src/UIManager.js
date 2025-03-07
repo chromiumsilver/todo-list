@@ -34,7 +34,13 @@ class UIManager {
       todayBtn: document.querySelector('#filter-today'),
       sidebar: document.querySelector('.sidebar'),
       listsContainer: document.querySelector('.lists'),
-      addListBtn: document.querySelector('.add-list-btn')
+      addListBtn: document.querySelector('.add-list-btn'),
+      // Task form modal elements
+      taskFormModal: document.querySelector('#taskFormModal'),
+      closeTaskModalBtn: document.querySelector('#closeTaskModal'),
+      addTaskForm: document.querySelector('#addTaskForm'),
+      cancelTaskBtn: document.querySelector('#cancelTaskBtn'),
+      taskListSelect: document.querySelector('#taskList')
     };
   }
 
@@ -43,6 +49,7 @@ class UIManager {
    */
   init() {
     this.setupEventListeners();
+    this.populateListsDropdown()
     this.renderInitialView();
   }
 
@@ -80,8 +87,24 @@ class UIManager {
     // Add new task
     this.elements.addTaskBtn.addEventListener('click', () => {
       this.showAddTaskForm();
-      this.renderTasks();
+      // this.renderTasks();
     });
+
+    // Close modal when clicking the close button
+    this.elements.closeTaskModalBtn.addEventListener('click', this.closeTaskModal.bind(this));
+
+    // Close modal when clicking the cancel button
+    this.elements.cancelTaskBtn.addEventListener('click', this.closeTaskModal.bind(this));
+
+    // Close modal when clicking outside the modal
+    this.elements.taskFormModal.addEventListener('click', (e) => {
+      if (e.target === this.elements.taskFormModal) {
+        this.closeTaskModal();
+      }
+    });
+
+    // Handle form submission
+    this.elements.addTaskForm.addEventListener('submit', this.handleTaskFormSubmit.bind(this));
 
     // Handle filter view change
     this.elements.filterBtns.forEach(btn => {
@@ -188,14 +211,9 @@ class UIManager {
    * @param {string} listName - The name of the list to show
    */
   showList(listName) {
-    // Update the title
-    // this.elements.taskListTitle.textContent = this.capitalizeFirstLetter(listName);
-
     // Get tasks for this list from the task manager
     return tasks = this.taskManager.getTasksByList(listName);
 
-    // Render the tasks
-    // this.renderCurrentViewTasks(tasks);
   }
 
 
@@ -210,9 +228,18 @@ class UIManager {
     taskItem.className = 'task-item';
     taskItem.dataset.id = task.id;
 
+    if (task.completed) {
+      taskItem.classList.add('completed');
+    }
+
+    // Determine if we should show priority indicator
+    const priorityClass = task.priority !== 'normal' ? `priority-${task.priority}` : '';
+    const flaggedIcon = task.flagged ? '<span class="material-icons task-flag">flag</span>' : '';
+
     taskItem.innerHTML = `
       <input type="checkbox" id="task-${index}" class="task-checkbox" ${task.completed ? 'checked' : ''}>
-      <label for="task-${index}" class="task-text">${task.title}</label>
+      <label for="task-${index}" class="task-text ${priorityClass}">${task.title}</label>
+      ${flaggedIcon}
       <div class="task-actions">
         <button class="task-edit">
           <span class="material-icons">edit</span>
@@ -243,13 +270,73 @@ class UIManager {
    * Show form to add a new task
    */
   showAddTaskForm() {
-    // In a real app, this would show a modal or form
-    const taskTitle = prompt('Enter task title:');
-    if (taskTitle && taskTitle.trim()) {
-      this.taskManager.createTask(taskTitle);
-    }
+    // Reset form
+    this.elements.addTaskForm.reset();
+
+    // Set default due date to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('taskDueDate').value = today;
+
+    // Show modal
+    this.elements.taskFormModal.classList.add('active');
   }
 
+  /**
+   * Close the task form modal
+   */
+  closeTaskModal() {
+    this.elements.taskFormModal.classList.remove('active');
+  }
+
+  /**
+   * Handle task form submission
+   * @param {Event} e - The submission event
+   */
+  handleTaskFormSubmit(e) {
+    e.preventDefault();
+
+    // Get form data
+    const formData = new FormData(this.elements.addTaskForm);
+    const taskData = {
+      title: formData.get('title'),
+      notes: formData.get('notes'),
+      dueDate: formData.get('dueDate') ? new Date(formData.get('dueDate')) : null,
+      listId: formData.get('listId'),
+      flagged: formData.get('flagged') === 'on',
+      priority: formData.get('priority')
+    };
+
+    // Validate form data
+    if (!taskData.title.trim()) {
+      alert('Please enter a task title');
+      return;
+    }
+
+    // Create the task using the TaskManager
+    this.taskManager.addTask(taskData);
+
+    // Close the modal
+    this.closeTaskModal();
+
+    // Re-render tasks
+    this.renderTasks();
+  }
+
+  /**
+   * Populate the lists dropdown in the add task form
+   */
+  populateListsDropdown() {
+    // Clear existing options
+    this.elements.taskListSelect.innerHTML = '';
+
+    // Add options for each list
+    this.taskManager.lists.forEach(list => {
+      const option = document.createElement('option');
+      option.value = list.id;
+      option.textContent = list.name;
+      this.elements.taskListSelect.appendChild(option);
+    });
+  }
 
   /**
    * Create toggle button for mobile

@@ -232,6 +232,167 @@ footer {
   background-color: var(--color-gray-light);
 }
 
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s linear 0.25s, opacity 0.25s;
+}
+
+.modal-overlay.active {
+  visibility: visible;
+  opacity: 1;
+  transition-delay: 0s;
+}
+
+.task-form-modal {
+  background-color: var(--color-white);
+  width: 90%;
+  max-width: 500px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-medium);
+  padding: var(--spacing-md);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--color-primary-light);
+}
+
+.modal-header h3 {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.close-modal {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.task-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.form-group label {
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  padding: var(--spacing-xs);
+  border: 1px solid var(--color-gray);
+  border-radius: var(--border-radius);
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.form-group textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.checkbox-group input {
+  width: 20px;
+  height: 20px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+}
+
+.btn {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: background-color var(--transition-speed);
+}
+
+.btn-cancel {
+  background-color: var(--color-gray-light);
+  color: var(--color-text);
+}
+
+.btn-cancel:hover {
+  background-color: var(--color-gray);
+}
+
+.btn-submit {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.btn-submit:hover {
+  opacity: 0.9;
+}
+
+/* Priority indicators */
+.task-text.priority-high {
+  font-weight: bold;
+  color: #e53935;
+}
+
+.task-text.priority-low {
+  color: var(--color-text-muted);
+}
+
+/* Flagged task indicator */
+.task-flag {
+  color: #f57c00;
+  margin-right: var(--spacing-sm);
+}
+
+/* Additional Task Form Modal styles */
+.form-group.checkbox-group label {
+  font-weight: normal;
+}
+
+/* Make space for both flag and actions */
+.task-item {
+  position: relative;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   main {

@@ -74,20 +74,26 @@ class TaskManager {
   }
 
   /**
-   * Create a new task
-   * @param {string} title - The task title
+   * Create a new task from form data
+   * @param {Object} taskData - The task data from the form
    * @returns {Task} The created task
    */
-  createTask(title) {
+  addTask(taskData) {
     const newTask = new Task(
       `task-${Date.now()}`,
-      title,
-      new Date(),
-      'family', // Default list
-    )
+      taskData.title,
+      taskData.dueDate,
+      taskData.listId || 'family', // Default to family list if not specified
+      taskData.notes || '',
+      taskData.flagged || false,
+      taskData.priority || 'normal'
+    );
+
     this.tasks.push(newTask);
     this.saveTasks();
+    return newTask;
   }
+
 
   /**
    * Add a task to the task list
