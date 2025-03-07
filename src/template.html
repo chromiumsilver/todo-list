@@ -26,58 +26,35 @@
   <main id="content">
     <div class="sidebar">
       <section class="filters">
-        <button class="filter-btn">
+        <button class="filter-btn active" id="filter-today">
           <span class="filter-icon material-icons">today</span>
-          <span>Today</span>
+          <span class="filter-name">Today</span>
         </button>
-        <button class="filter-btn">
+        <button class="filter-btn" id="filter-all">
           <span class="filter-icon material-icons">calendar_month</span>
-          <span>All</span>
+          <span class="filter-name">All</span>
         </button>
-        <button class="filter-btn">
+        <button class="filter-btn" id="filter-flag">
           <span class="filter-icon material-icons">flag</span>
-          <span>Flagged</span>
+          <span class="filter-name">Flagged</span>
         </button>
       </section>
       <section class="lists">
         <h2 class="list-header">My Lists</h2>
-        <button class="filter-btn">
-          <span class="filter-icon material-icons">home</span>
-          <span>Family</span>
+        <button class="list-btn" id="list-family">
+          <span class="list-icon material-icons">home</span>
+          <span class="list-name">Family</span>
         </button>
       </section>
       <button class="add-list-btn">+ Add List</button>
     </div>
     <section class="main-content">
       <div class="task-list-header">
-        <h2 class="task-list-title">Family</h2>
+        <h2 class="task-list-title">Today</h2>
         <button class="add-task-btn">+ Add Task</button>
       </div>
       <ul class="tasks">
-        <li class="task-item">
-          <input type="checkbox" id="task-1" class="task-checkbox">
-          <label for="task-1" class="task-text">Buy groceries</label>
-          <div class="task-actions">
-            <button class="task-edit">
-              <span class="material-icons">edit</span>
-            </button>
-            <button class="task-delete">
-              <span class="material-icons">delete</span>
-            </button>
-          </div>
-        </li>
-        <li class="task-item completed">
-          <input type="checkbox" id="task-2" class="task-checkbox" checked>
-          <label for="task-2" class="task-text">Call mom</label>
-          <div class="task-actions">
-            <button class="task-edit">
-              <span class="material-icons">edit</span>
-            </button>
-            <button class="task-delete">
-              <span class="material-icons">delete</span>
-            </button>
-          </div>
-        </li>
+        <!-- Tasks will be generated dynamically -->
       </ul>
     </section>
   </main>
