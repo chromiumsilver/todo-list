@@ -88,10 +88,6 @@
             <!-- Lists will be populated dynamically -->
           </select>
         </div>
-        <div class="form-group checkbox-group">
-          <input type="checkbox" id="taskFlagged" name="flagged">
-          <label for="taskFlagged">Flag this task</label>
-        </div>
         <div class="form-group">
           <label for="taskPriority">Priority</label>
           <select id="taskPriority" name="priority">
@@ -99,6 +95,13 @@
             <option value="normal" selected>Normal</option>
             <option value="high">High</option>
           </select>
+        </div>
+        <div class="form-group switch-group">
+          <label for="taskFlagged">Flag</label>
+          <label class="switch">
+            <input type="checkbox" id="taskFlagged" name="flagged">
+            <span class="slider"></span>
+          </label>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-cancel" id="cancelTaskBtn">Cancel</button>
