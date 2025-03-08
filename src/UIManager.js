@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 /**
  * UI class
  * Handles all DOM manipulation and UI updates
@@ -15,6 +16,9 @@ class UIManager {
 
     // Cache DOM elements
     this.elements = this.cacheDOMElements();
+
+    // Track current editing task
+    this.currentEditingTaskId = null;
 
     // Initialize UI
     this.init();
@@ -38,9 +42,11 @@ class UIManager {
       // Task form modal elements
       taskFormModal: document.querySelector('#taskFormModal'),
       closeTaskModalBtn: document.querySelector('#closeTaskModal'),
-      addTaskForm: document.querySelector('#addTaskForm'),
+      taskForm: document.querySelector('#taskForm'),
       cancelTaskBtn: document.querySelector('#cancelTaskBtn'),
-      taskListSelect: document.querySelector('#taskList')
+      taskListSelect: document.querySelector('#taskList'),
+      modalTitle: document.querySelector('.modal-header h3'),
+      submitTaskBtn: document.querySelector('.btn-submit')
     };
   }
 
@@ -70,7 +76,13 @@ class UIManager {
         taskItem.classList.toggle('completed');
       }
 
-      //TODO: Handle edit button clicks
+      // Handle edit button clicks
+      const editBtn = e.target.closest('.task-edit');
+      if (editBtn) {
+        const taskItem = e.target.closest('.task-item');
+        const taskId = taskItem.dataset.id;
+        this.showEditTaskForm(taskId);
+      }
 
       // Handle delete button clicks
       const deleteBtn = e.target.closest('.task-delete');
@@ -87,7 +99,6 @@ class UIManager {
     // Add new task
     this.elements.addTaskBtn.addEventListener('click', () => {
       this.showAddTaskForm();
-      // this.renderTasks();
     });
 
     // Close modal when clicking the close button
@@ -104,7 +115,7 @@ class UIManager {
     });
 
     // Handle form submission
-    this.elements.addTaskForm.addEventListener('submit', this.handleTaskFormSubmit.bind(this));
+    this.elements.taskForm.addEventListener('submit', this.handleTaskFormSubmit.bind(this));
 
     // Handle filter view change
     this.elements.filterBtns.forEach(btn => {
@@ -152,7 +163,6 @@ class UIManager {
     // Render the current view
     const currentView = this.elements.taskListTitle.textContent;
     let tasks;
-    //TODO: delete
     console.log(currentView);
     if (Object.values(UIManager.FILTER_TYPES).includes(currentView)) {
       tasks = this.applyFilter(currentView);
@@ -270,12 +280,53 @@ class UIManager {
    * Show form to add a new task
    */
   showAddTaskForm() {
-    // Reset form
-    this.elements.addTaskForm.reset();
+    // Reset form and editing status
+    this.currentEditingTaskId = null;
+    this.elements.taskForm.reset();
+
+    // Update modal UI for add mode
+    this.elements.modalTitle.textContent = 'Add New Task';
+    this.elements.submitTaskBtn.textContent = 'Add Task';
 
     // Set default due date to today
-    const today = new Date().toISOString().split('T')[0];
+    const today = format(new Date(), 'yyyy-MM-dd');
     document.getElementById('taskDueDate').value = today;
+
+    // Show modal
+    this.elements.taskFormModal.classList.add('active');
+  }
+
+  /**
+   * Show form to edit an existing task
+   * @param {string} taskId - The ID of the task to edit
+   */
+  showEditTaskForm(taskId) {
+    const task = this.taskManager.getTaskById(taskId);
+    if (!task) return;
+
+    // Set current editing task
+    this.currentEditingTaskId = taskId;
+
+    // Update modal UI for edit mode
+    this.elements.modalTitle.textContent = 'Edit Task';
+    this.elements.submitTaskBtn.textContent = 'Update Task';
+
+    // Fill form with task data
+    const form = this.elements.taskForm;
+    form.elements['title'].value = task.title;
+    form.elements['notes'].value = task.notes || '';
+
+    // Format date for input if it exists
+    if (task.dueDate) {
+      const dueDate = new Date(task.dueDate);
+      form.elements['dueDate'].value = format(dueDate, 'yyyy-MM-dd');
+    } else {
+      form.elements['dueDate'].value = '';
+    }
+
+    form.elements['listId'].value = task.listId;
+    form.elements['flagged'].checked = task.flagged;
+    form.elements['priority'].value = task.priority;
 
     // Show modal
     this.elements.taskFormModal.classList.add('active');
@@ -296,7 +347,7 @@ class UIManager {
     e.preventDefault();
 
     // Get form data
-    const formData = new FormData(this.elements.addTaskForm);
+    const formData = new FormData(this.elements.taskForm);
     const taskData = {
       title: formData.get('title'),
       notes: formData.get('notes'),
@@ -312,8 +363,13 @@ class UIManager {
       return;
     }
 
-    // Create the task using the TaskManager
-    this.taskManager.addTask(taskData);
+    if (this.currentEditingTaskId) {
+      // Update existing task
+      this.taskManager.updateTask(this.currentEditingTaskId, taskData);
+    } else {
+      // Create new task
+      this.taskManager.addTask(taskData);
+    }
 
     // Close the modal
     this.closeTaskModal();

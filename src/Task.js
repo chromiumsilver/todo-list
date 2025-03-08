@@ -12,8 +12,9 @@ class Task {
    * @param {string} notes - Additional notes for the task
    * @param {boolean} flagged - Whether the task is flagged
    * @param {string} priority - Priority level (low, normal, high)
+   * @param {boolean} completed - Whether the task is completed
    */
-  constructor(id, title, dueDate = null, listId, notes = '', flagged = false, priority = 'normal') {
+  constructor(id, title, dueDate = null, listId, notes = '', flagged = false, priority = 'normal', completed = false) {
     this.id = id;
     this.title = title;
     this.dueDate = dueDate;
@@ -21,7 +22,7 @@ class Task {
     this.notes = notes;
     this.flagged = flagged;
     this.priority = priority;
-    this.completed = false;
+    this.completed = completed;
   }
 
   /**

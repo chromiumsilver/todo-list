@@ -94,16 +94,28 @@ class TaskManager {
     return newTask;
   }
 
-
   /**
-   * Add a task to the task list
-   * @param {Object} task - The task to add
+   * Update an existing task
+   * @param {string} taskId - The ID of the task to update
+   * @param {Object} taskData - The updated task data
+   * @returns {Task|null} The updated task or null if not found
    */
-  // addTask(task) {
-  //   this.tasks.push(task);
-  //   this.saveTasks();
-  //   return task;
-  // }
+  updateTask(taskId, taskData) {
+    const taskIndex = this.tasks.findIndex(task => task.id === taskId);
+    if (taskIndex === -1) return null;
+
+    // Update task properties
+    const task = this.tasks[taskIndex];
+    task.title = taskData.title;
+    task.dueDate = taskData.dueDate;
+    task.listId = taskData.listId;
+    task.notes = taskData.notes || '';
+    task.flagged = taskData.flagged || false;
+    task.priority = taskData.priority || 'normal';
+
+    this.saveTasks();
+    return task;
+  }
 
   /**
    * Get a task by ID

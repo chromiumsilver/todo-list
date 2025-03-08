@@ -6,6 +6,8 @@
   --color-gray: lightgray;
   --color-text: #333333;
   --color-text-muted: #666666;
+  --color-text-important: #e53935;
+  --color-flag: #f57c00;
 
   --spacing-lg: 2rem;
   --spacing-md: 1.5rem;
@@ -111,7 +113,8 @@ footer {
   box-shadow: var(--shadow-small);
 }
 
-.filter-icon {
+.filter-icon,
+.list-icon {
   margin-right: var(--spacing-sm);
 }
 
@@ -312,7 +315,7 @@ footer {
   padding: var(--spacing-xs);
   border: 1px solid var(--color-gray);
   border-radius: var(--border-radius);
-  font-family: inherit;
+  /* font-family: inherit; */
   font-size: 1rem;
 }
 
@@ -371,7 +374,7 @@ input:checked+.slider:before {
   transform: translateX(22px);
 }
 
-/* Adjust the form group for switch toggle */
+/* Switch toggle styling*/
 .form-group.switch-group {
   align-self: center;
   display: flex;
@@ -424,7 +427,7 @@ input:checked+.slider:before {
 /* Priority indicators */
 .task-text.priority-high {
   font-weight: bold;
-  color: #e53935;
+  color: var(--color-text-important);
 }
 
 .task-text.priority-low {
@@ -433,7 +436,7 @@ input:checked+.slider:before {
 
 /* Flagged task indicator */
 .task-flag {
-  color: #f57c00;
+  color: var(--color-flag);
   margin-right: var(--spacing-sm);
 }
 
