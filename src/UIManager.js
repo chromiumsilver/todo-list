@@ -246,19 +246,29 @@ class UIManager {
     const priorityClass = task.priority !== 'normal' ? `priority-${task.priority}` : '';
     const flaggedIcon = task.flagged ? '<span class="material-icons task-flag">flag</span>' : '';
 
+    // Format the due date if available
+    let dueDateDisplay = '';
+    if (task.dueDate) {
+      const dueDate = new Date(task.dueDate);
+      dueDateDisplay = `<span class="task-due-date">${format(dueDate, 'MMM d, yyyy')}</span>`;
+    }
+
     taskItem.innerHTML = `
-      <input type="checkbox" id="task-${index}" class="task-checkbox" ${task.completed ? 'checked' : ''}>
-      <label for="task-${index}" class="task-text ${priorityClass}">${task.title}</label>
-      ${flaggedIcon}
-      <div class="task-actions">
-        <button class="task-edit">
-          <span class="material-icons">edit</span>
-        </button>
-        <button class="task-delete">
-          <span class="material-icons">delete</span>
-        </button>
-      </div>
-    `;
+     <input type="checkbox" id="task-${index}" class="task-checkbox" ${task.completed ? 'checked' : ''}>
+     <div class="task-content">
+       <label for="task-${index}" class="task-text ${priorityClass}">${task.title}</label>
+       ${dueDateDisplay}
+     </div>
+     ${flaggedIcon}
+     <div class="task-actions">
+       <button class="task-edit">
+         <span class="material-icons">edit</span>
+       </button>
+       <button class="task-delete">
+         <span class="material-icons">delete</span>
+       </button>
+     </div>
+   `;
 
     return taskItem;
   }

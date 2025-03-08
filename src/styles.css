@@ -186,16 +186,14 @@ footer {
   display: flex;
   align-items: center;
   padding: var(--spacing-xs);
-  /* margin-bottom: var(--spacing-sm); */
   border-radius: var(--border-radius);
   background-color: var(--color-white);
-  box-shadow: var(--shadow-small);
   transition: transform var(--transition-speed), box-shadow var(--transition-speed);
 }
 
 .task-item:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-medium);
+  box-shadow: var(--shadow-small);
 }
 
 .task-checkbox {
@@ -205,12 +203,29 @@ footer {
   height: 20px;
 }
 
+.task-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 .task-text {
   flex-grow: 1;
   cursor: pointer;
 }
 
 .task-item.completed .task-text {
+  text-decoration: line-through;
+  color: var(--color-text-muted);
+}
+
+.task-due-date {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+.task-item.completed .task-due-date {
   text-decoration: line-through;
   color: var(--color-text-muted);
 }
@@ -234,6 +249,8 @@ footer {
 .task-delete:hover {
   background-color: var(--color-gray-light);
 }
+
+
 
 /* Modal Styles */
 .modal-overlay {
@@ -443,11 +460,6 @@ input:checked+.slider:before {
 /* Additional Task Form Modal styles */
 .form-group.checkbox-group label {
   font-weight: normal;
-}
-
-/* Make space for both flag and actions */
-.task-item {
-  position: relative;
 }
 
 /* Responsive design */
