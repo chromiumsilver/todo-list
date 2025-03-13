@@ -41,10 +41,7 @@
       </section>
       <section class="lists">
         <h2 class="list-header">My Lists</h2>
-        <button class="list-btn" id="list-family">
-          <span class="list-icon material-icons">home</span>
-          <span class="list-name">Family</span>
-        </button>
+        <!-- Lists will be generated dynamically -->
       </section>
       <button class="add-list-btn">+ Add List</button>
     </div>
@@ -106,6 +103,43 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-cancel" id="cancelTaskBtn">Cancel</button>
           <button type="submit" class="btn btn-submit">Add Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!-- List Form Modal -->
+  <div class="modal-overlay" id="listFormModal">
+    <div class="task-form-modal">
+      <div class="modal-header">
+        <h3>Add New List</h3>
+        <button class="close-modal" id="closeListModal">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+      <form class="task-form" id="listForm">
+        <div class="form-group">
+          <label for="listName">List Name*</label>
+          <input type="text" id="listName" name="name" required>
+        </div>
+        <div class="form-group">
+          <label for="listIcon">Icon</label>
+          <select id="listIcon" name="icon">
+            <option value="list">List</option>
+            <option value="home">Home</option>
+            <option value="work">Work</option>
+            <option value="shopping_cart">Shopping</option>
+            <option value="school">School</option>
+            <option value="local_hospital">Health</option>
+            <option value="flight">Travel</option>
+            <option value="computer">Technology</option>
+            <option value="fitness_center">Fitness</option>
+            <option value="restaurant">Food</option>
+            <option value="assignment">Projects</option>
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-cancel" id="cancelListBtn">Cancel</button>
+          <button type="submit" class="btn btn-submit">Add List</button>
         </div>
       </form>
     </div>

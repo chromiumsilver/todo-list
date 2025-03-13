@@ -236,7 +236,8 @@ footer {
 }
 
 .task-edit,
-.task-delete {
+.task-delete,
+.list-delete {
   cursor: pointer;
   background: none;
   border: none;
@@ -250,7 +251,14 @@ footer {
   background-color: var(--color-gray-light);
 }
 
+.list-delete {
+  margin-left: auto;
+  display: flex;
+}
 
+.list-delete:hover {
+  background-color: var(--color-gray);
+}
 
 /* Modal Styles */
 .modal-overlay {

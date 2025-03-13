@@ -9,9 +9,7 @@ class TaskManager {
   constructor() {
     // Initialize data
     this.tasks = [];
-    this.lists = [
-      { id: 'family', name: 'Family', icon: 'home' }
-    ];
+    this.lists = [];
 
     // Load tasks from storage
     this.loadTasks();
@@ -64,6 +62,20 @@ class TaskManager {
 
     this.tasks = sampleTasks;
     this.saveTasks();
+  }
+
+  /**
+  * Add default list
+  */
+  addDefaultList() {
+    const defaultList = {
+      id: `list-default`,
+      name: 'Family',
+      icon: 'home'
+    }
+
+    this.lists.push(defaultList);
+    this.saveLists();
   }
 
   /**
@@ -183,6 +195,85 @@ class TaskManager {
     }
     // update changes
     this.saveTasks();
+  }
+
+  /**
+   * Load lists from localStorage
+   */
+  loadLists() {
+    const storedLists = localStorage.getItem('lists');
+
+    if (storedLists) {
+      this.lists = JSON.parse(storedLists);
+    } else {
+      this.addDefaultList();
+    }
+  }
+
+  /**
+  * Save lists to localStorage
+  */
+  saveLists() {
+    localStorage.setItem('lists', JSON.stringify(this.lists));
+  }
+
+  /**
+ * Add a new list
+ * @param {Object} listData - The list data
+ * @returns {Object} The created list
+ */
+  addList(listData) {
+    const newList = {
+      id: `list-${Date.now()}`,
+      name: listData.name,
+      icon: listData.icon || 'list'
+    };
+
+    this.lists.push(newList);
+    console.log(this.lists);
+    this.saveLists();
+    return newList;
+  }
+
+  /**
+   * Delete a list
+   * @param {string} listId - The ID of the list to delete
+   * @returns {boolean} True if the list was deleted, false otherwise
+   */
+  deleteList(listId) {
+    // Don't allow deleting the last list
+    if (this.lists.length <= 1) {
+      return false;
+    }
+
+    const initialLength = this.lists.length;
+    this.lists = this.lists.filter(list => list.id !== listId);
+
+    if (this.lists.length !== initialLength) {
+      // Delete all tasks associated with this list
+      this.tasks = this.tasks.filter(task => task.listId !== listId);
+
+      // Save changes
+      this.saveLists();
+      this.saveTasks();
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Get a list by ID
+   * @param {string} listId - The ID of the list to get
+   * @returns {Object|null} The list or null if not found
+   */
+  getListById(listId) {
+    return this.lists.find(list => list.id === listId) || null;
+  }
+
+  getAllLists() {
+    this.loadLists();
+    return this.lists;
   }
 }
 

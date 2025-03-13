@@ -46,7 +46,12 @@ class UIManager {
       cancelTaskBtn: document.querySelector('#cancelTaskBtn'),
       taskListSelect: document.querySelector('#taskList'),
       modalTitle: document.querySelector('.modal-header h3'),
-      submitTaskBtn: document.querySelector('.btn-submit')
+      submitTaskBtn: document.querySelector('.btn-submit'),
+      // List form modal elements
+      listFormModal: document.querySelector('#listFormModal'),
+      listForm: document.querySelector('#listForm'),
+      closeListModalBtn: document.querySelector('#closeListModal'),
+      cancelListBtn: document.querySelector('#cancelListBtn')
     };
   }
 
@@ -55,15 +60,15 @@ class UIManager {
    */
   init() {
     this.setupEventListeners();
-    this.populateListsDropdown()
     this.renderInitialView();
+    this.populateListsDropdown();
   }
 
   /**
    * Set up all event listeners
    */
   setupEventListeners() {
-    // Event Delegation: Task actions (edit, delete)
+    // Event Delegation: Task actions (complete, edit, delete)
     this.elements.taskList.addEventListener('click', (e) => {
       // Handle task checkbox
       if (e.target.closest('.task-checkbox')) {
@@ -103,14 +108,21 @@ class UIManager {
 
     // Close modal when clicking the close button
     this.elements.closeTaskModalBtn.addEventListener('click', this.closeTaskModal.bind(this));
+    this.elements.closeListModalBtn.addEventListener('click', this.closeListModal.bind(this));
 
     // Close modal when clicking the cancel button
     this.elements.cancelTaskBtn.addEventListener('click', this.closeTaskModal.bind(this));
+    this.elements.cancelListBtn.addEventListener('click', this.closeListModal.bind(this));
 
     // Close modal when clicking outside the modal
     this.elements.taskFormModal.addEventListener('click', (e) => {
       if (e.target === this.elements.taskFormModal) {
         this.closeTaskModal();
+      }
+    });
+    this.elements.listFormModal.addEventListener('click', (e) => {
+      if (e.target === this.elements.listFormModal) {
+        this.closeListModal();
       }
     });
 
@@ -121,13 +133,62 @@ class UIManager {
     this.elements.filterBtns.forEach(btn => {
       btn.addEventListener('click', (e) => {
         this.updateActiveButton(btn);
-        const currentView = btn.querySelector('.filter-name').textContent;
         // Update tasks displayed
+        const currentView = btn.querySelector('.filter-name').textContent;
         this.elements.taskListTitle.textContent = currentView;
         this.renderTasks();
       });
     });
 
+    // Event delegation for list actions
+    this.elements.listsContainer.addEventListener('click', (e) => {
+      // Handle list button clicks
+      const listBtn = e.target.closest('.list-btn');
+      if (listBtn) {
+        const listId = listBtn.dataset.id;
+        const listName = listBtn.querySelector('.list-name').textContent;
+        // update active button and display tasks for this list
+        this.updateActiveButton(listBtn);
+        this.elements.taskListTitle.textContent = listName;
+        this.renderTasks();
+      }
+
+      // Handle list delete button clicks
+      const deleteListBtn = e.target.closest('.list-delete');
+      if (deleteListBtn) {
+        const listItem = deleteListBtn.closest('.list-btn');
+        const listId = listItem.dataset.id;
+        if (confirm('Are you sure you want to delete this list? All tasks in this list will also be deleted.')) {
+          const deleted = this.taskManager.deleteList(listId);
+
+          if (deleted) {
+            // Re-render the lists
+            this.renderLists();
+            this.populateListsDropdown();
+
+            // If we deleted the active list, switch to Today view
+            if (listItem.classList.contains('active')) {
+              this.updateActiveButton(this.elements.todayBtn);
+              this.elements.taskListTitle.textContent = UIManager.FILTER_TYPES.TODAY;
+            }
+
+            // Re-render tasks
+            this.renderTasks();
+          } else {
+            alert('Cannot delete the last list.');
+          }
+        }
+      }
+
+    });
+
+    // Add new list
+    this.elements.addListBtn.addEventListener('click', () => {
+      this.showAddListForm();
+    })
+
+    // Handle list form submission
+    this.elements.listForm.addEventListener('submit', this.handleListFormSubmit.bind(this));
   }
 
   /**
@@ -136,6 +197,7 @@ class UIManager {
   renderInitialView() {
     this.updateActiveButton(this.elements.todayBtn);
     this.renderTasks();
+    this.renderLists();
   }
 
   /**
@@ -147,6 +209,10 @@ class UIManager {
     this.elements.filterBtns.forEach(btn => {
       btn.classList.remove('active');
     });
+
+    this.elements.listsContainer.querySelectorAll('.list-btn').forEach(btn => {
+      btn.classList.remove('active');
+    })
 
     // Add active class to the clicked button
     activeBtn.classList.add('active');
@@ -163,7 +229,6 @@ class UIManager {
     // Render the current view
     const currentView = this.elements.taskListTitle.textContent;
     let tasks;
-    console.log(currentView);
     if (Object.values(UIManager.FILTER_TYPES).includes(currentView)) {
       tasks = this.applyFilter(currentView);
     } else {
@@ -180,6 +245,62 @@ class UIManager {
       const taskElement = this.createTaskElement(task, index);
       this.elements.taskList.appendChild(taskElement);
     });
+  }
+
+  /**
+   * Render all lists in the sidebar
+   */
+  renderLists() {
+    // Get the lists section content
+    const listHeader = document.querySelector('.list-header');
+
+    // Clear existing list buttons
+    const listBtns = document.querySelectorAll('.list-btn');
+    listBtns.forEach(btn => {
+      if (btn.parentNode === this.elements.listsContainer) {
+        btn.remove();
+      }
+    });
+
+    // Re-create list header and add it first
+    if (!listHeader) {
+      const header = document.createElement('h2');
+      header.className = 'list-header';
+      header.textContent = 'My Lists';
+      this.elements.listsContainer.appendChild(header);
+    }
+
+    // Add lists
+    this.taskManager.getAllLists().forEach(list => {
+      const listBtn = this.createListBtn(list);
+      this.elements.listsContainer.appendChild(listBtn);
+    });
+  }
+
+  /**
+   * Create a list button element
+   * @param {Object} list - The list data
+   * @returns {HTMLElement} The list button element
+   */
+  createListBtn(list) {
+    const listBtn = document.createElement('button');
+    listBtn.className = 'list-btn';
+    listBtn.dataset.id = list.id;
+
+    listBtn.innerHTML = `
+      <span class="list-icon material-icons">${list.icon}</span>
+      <span class="list-name">${list.name}</span>
+      <button class="list-delete">
+        <span class="material-icons">delete</span>
+      </button>
+    `;
+
+    // Prevent event bubbling from delete button
+    // deleteBtn.addEventListener('click', (e) => {
+    //   e.stopPropagation();
+    // });
+
+    return listBtn;
   }
 
   /**
@@ -222,7 +343,7 @@ class UIManager {
    */
   showList(listName) {
     // Get tasks for this list from the task manager
-    return tasks = this.taskManager.getTasksByList(listName);
+    return this.taskManager.getTasksByList(listName);
 
   }
 
@@ -402,6 +523,50 @@ class UIManager {
       option.textContent = list.name;
       this.elements.taskListSelect.appendChild(option);
     });
+  }
+
+  /**
+   * Show form to add a new list
+   */
+  showAddListForm() {
+    // Reset form
+    this.elements.listForm.reset();
+    // Show modal
+    this.elements.listFormModal.classList.add('active');
+  }
+
+  /**
+  * Close the list form modal
+  */
+  closeListModal() {
+    this.elements.listFormModal.classList.remove('active');
+  }
+
+  handleListFormSubmit(e) {
+    e.preventDefault();
+
+    // Get form data
+    const formData = new FormData(this.elements.listForm);
+    const listData = {
+      name: formData.get('name'),
+      icon: formData.get('icon')
+    };
+
+    // Validate form data
+    if (!listData.name.trim()) {
+      alert('Please enter a list name');
+      return;
+    }
+
+    // Create new list
+    this.taskManager.addList(listData);
+
+    // Close the modal
+    this.closeListModal();
+
+    // Re-render lists
+    this.renderLists();
+    this.populateListsDropdown();
   }
 
   /**
