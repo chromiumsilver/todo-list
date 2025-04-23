@@ -2,11 +2,11 @@
 
 A clean, modern Todo List application built with JavaScript following MVC architecture.
 
-![Todo List App](https://github.com/chromiumsilver/todo-list/tree/main/assets/screenshot.png)
+![Todo List App](assets/screenshot.png)
 
-## [Live Demo](https://chromiumsilver.github.io/todo-list/)
+## Live Demo
 
-Try the application live at: [https://chromiumsilver.github.io/todo-list/](https://chromiumsilver.github.io/todo-list/)
+Try the application live [here](https://chromiumsilver.github.io/todo-list/) 👈🏻
 
 ## Features
 
