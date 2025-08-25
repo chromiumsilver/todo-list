@@ -49,7 +49,6 @@ This application is built following the Model-View-Controller (MVC) architectura
 - **Utils**:
   - `EventBus`: Handles communication between components using the publish-subscribe pattern
 
-
 ## Acknowledgments
 
 - Icons from Material Icons
